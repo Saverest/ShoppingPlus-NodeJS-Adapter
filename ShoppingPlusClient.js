@@ -1,11 +1,11 @@
 "use strict";
 
 /*** Configuration object
- * @typedef {Object} ShoppingPlusConfiguration
- * @property {number} idUtente                  - UserID
- * @property {string} login                     - Login
- * @property {string} password                  - Password
- * @property {number} idServ                    - IdServ
+ * @typedef {object} ShoppingPlusConfiguration
+ * @property {number} IdUtente                  - UserID
+ * @property {string} Login                     - Login
+ * @property {string} Password                  - Password
+ * @property {number} IdServ                    - IdServ
  */
 
 // WSDL URL
@@ -31,7 +31,6 @@ function ShoppingPlusClient(configuration) {
 }
 
 /*** Set timeout
- *
  * @param {number} timeout Timeout in milliseconds, must be positive
  */
 ShoppingPlusClient.prototype.setTimeout = function (timeout) {
@@ -46,28 +45,98 @@ ShoppingPlusClient.prototype.setTimeout = function (timeout) {
 	}
 };
 
-ShoppingPlusClient.prototype.callCardSaldoGet = function (idCard, callback) {
+/*** Method to get the client configuration
+ * @return {ShoppingPlusConfiguration} configuration
+ */
+ShoppingPlusClient.prototype.getConfiguration = function () {
+	let res = {};
+	Object.assign(res, _configuration);
+	return res;
+};
 
-	Soap.createClient(url, {
-		timeout: options.timeout,
-		wsdl_options: {
-			ciphers: options.ciphers
+/***
+ * @callback callCardSaldoGetCallback
+ * @param {object} error
+ * @param {object} result
+ */
+/*** CardSaldoGet
+ * @param args
+ * @param {callCardSaldoGetCallback} callback
+ */
+ShoppingPlusClient.prototype.callCardSaldoGet = function (args, callback) {
+
+	Soap.createClient(url,
+		{
+			timeout: options.timeout,
+			wsdl_options: {
+				ciphers: options.ciphers
+			}
+		},
+		function (err, client) {
+			if (err) {
+				throw err;
+			} else {
+
+				let content = {};
+				Object.assign(content, _configuration);
+				Object.assign(content, args);
+
+				client.CardSaldoGet(
+					content,
+					options,
+					{
+						"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/CardSaldoGet"
+					},
+					function (err, result) {
+						if (callback && typeof callback === "function") {
+							callback(err, result)
+						}
+					}
+				);
+			}
 		}
-	}, function (err, client) {
-		if (err) {
-			throw err;
-		} else {
+	);
+};
 
-			let extend = require("util")._extend;
+/***
+ * @callback callMovimentoAddSaldoCallback
+ * @param {object} error
+ * @param {object} result
+ */
+/*** CardSaldoGet
+ * @param args
+ * @param {callMovimentoAddSaldoCallback} callback
+ */
+ShoppingPlusClient.prototype.callMovimentoAddSaldo = function (args, callback) {
+	Soap.createClient(url,
+		{
+			timeout: options.timeout,
+			wsdl_options: {
+				ciphers: options.ciphers
+			}
+		},
+		function (err, client) {
+			if (err) {
+				throw err;
+			} else {
 
-			let args = extend({IdCard: idCard}, _configuration);
+				let content = {};
+				Object.assign(content, _configuration);
+				Object.assign(content, args);
 
-			client.CardSaldoGet(args, options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/CardSaldoGet"}, function (err, result) {
-
-				if (callback && typeof callback === "function") {
-					callback(err, result)
-				}
-			});
+				client.MovimentoAddSaldo(
+					content,
+					options,
+					{
+						"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/MovimentoAddSaldo"
+					},
+					function (err, result) {
+						if (callback && typeof callback === "function") {
+							callback(err, result)
+						}
+					}
+				);
+			}
 		}
-	})
+	);
 };
