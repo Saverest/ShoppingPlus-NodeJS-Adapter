@@ -22,5 +22,9 @@ test:
     - npm run test-cov
   environment:
     name: test_environment
+  artifacts:
+    paths:
+      - coverage/
+    expire_in: 1 week
 
 
