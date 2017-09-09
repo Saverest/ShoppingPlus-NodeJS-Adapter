@@ -1,0 +1,26 @@
+image: node:6
+
+stages:
+ - buildConfig
+ - test
+
+
+buildConfig:
+  stage: buildConfig
+  script:
+    - echo "{\"mail\":{\"configuration\":{\"port\":$mail_port,\"host\":\"$mail_host\",\"secure\":$mail_secure,\"auth\":$mail_auth},\"defaults\":$mail_defaults}}" > config.json
+    - cat config.json
+  environment:
+    name: test_environment
+
+test:
+  stage: test
+  script:
+    - echo "{\"shopify\":{\"shop\":\"$shopify_shop_name\",\"shopify_api_key\":\"$shopify_api_key\", \"access_token\":\"$shopify_access_token\"},\"mail\":{\"configuration\":{\"port\":$mail_port,\"host\":\"$mail_host\",\"secure\":$mail_secure,\"auth\":$mail_auth},\"defaults\":$mail_defaults}}" > config.json
+    - npm update
+    - npm test
+    - npm run test-cov
+  environment:
+    name: test_environment
+
+
