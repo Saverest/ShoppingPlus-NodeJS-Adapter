@@ -7,27 +7,43 @@
  * @property {string} Password                  - Password
  * @property {number} IdServ                    - IdServ
  */
+/*** Options object
+ * @typedef {object} SoapClientOptions
+ * @property {number} [timeout]                 - Call timeout in milliseconds, must be positive
+ * @property {string} [ciphers]                   - Ciphers used in the connection
+ */
 
 // WSDL URL
 const url = "https://servizi.shoppingplus.it/webservices/spservice.asmx?wsdl";
 
 let Soap = require("soap");
 
-let options = {
+const defaultOptions = {
 	"timeout": 5000,
 	"ciphers": "DES-CBC3-SHA"
 };
-let _configuration = {};
+
+const defaultConfiguration = {};
 
 module.exports = ShoppingPlusClient;
 
 /*** Constructor
- *
+ * @constructor {ShoppingPlusClient}
  * @param {ShoppingPlusConfiguration} configuration
- * @constructor
+ * @param {SoapClientOptions} [options] timeout of each call
  */
-function ShoppingPlusClient(configuration) {
-	_configuration = configuration;
+function ShoppingPlusClient(configuration, options) {
+	this._configuration = {};
+	Object.assign(this._configuration, defaultConfiguration);
+	Object.assign(this._configuration, configuration);
+
+	if (options && options.timeout && options.timeout <= 0) {
+		throw new TypeError("Timeout must be a positive integer");
+	}
+
+	this._options = {};
+	Object.assign(this._options, defaultOptions);
+	Object.assign(this._options, options);
 }
 
 /*** Set timeout
@@ -35,13 +51,10 @@ function ShoppingPlusClient(configuration) {
  */
 ShoppingPlusClient.prototype.setTimeout = function (timeout) {
 	if (timeout > 0) {
-		options.timeout = timeout;
+		this._options.timeout = timeout;
+		return Number(this._options.timeout);
 	} else {
-		throw {
-			error: "Negative timeout",
-			message: "Timeout must be positive",
-			value: timeout
-		}
+		throw new TypeError("Timeout must be a positive integer");
 	}
 };
 
@@ -50,7 +63,7 @@ ShoppingPlusClient.prototype.setTimeout = function (timeout) {
  */
 ShoppingPlusClient.prototype.getConfiguration = function () {
 	let res = {};
-	Object.assign(res, _configuration);
+	Object.assign(res, this._configuration);
 	return res;
 };
 
@@ -65,37 +78,24 @@ ShoppingPlusClient.prototype.getConfiguration = function () {
  */
 ShoppingPlusClient.prototype.callCardSaldoGet = function (args, callback) {
 
-	Soap.createClient(url,
-		{
-			timeout: options.timeout,
+	if (!this._soapClient) {
+		this._soapClient = Soap.createClientAsync(url, {
+			timeout: this._timeout,
 			wsdl_options: {
-				ciphers: options.ciphers
+				ciphers: this._options.ciphers
 			}
-		},
-		function (err, client) {
-			if (err) {
-				throw err;
-			} else {
+		});
+	}
 
-				let content = {};
-				Object.assign(content, _configuration);
-				Object.assign(content, args);
+	this._soapClient.then((client) => {
 
-				client.CardSaldoGet(
-					content,
-					options,
-					{
-						"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/CardSaldoGet"
-					},
-					function (err, result) {
-						if (callback && typeof callback === "function") {
-							callback(err, result)
-						}
-					}
-				);
-			}
-		}
-	);
+		let content = {};
+		Object.assign(content, this._configuration);
+		Object.assign(content, args);
+
+		client.CardSaldoGet(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/CardSaldoGet"}, callback);
+
+	});
 };
 
 /***
@@ -108,35 +108,23 @@ ShoppingPlusClient.prototype.callCardSaldoGet = function (args, callback) {
  * @param {callMovimentoAddSaldoCallback} callback
  */
 ShoppingPlusClient.prototype.callMovimentoAddSaldo = function (args, callback) {
-	Soap.createClient(url,
-		{
-			timeout: options.timeout,
+
+	if (!this._soapClient) {
+		this._soapClient = Soap.createClientAsync(url, {
+			timeout: this._timeout,
 			wsdl_options: {
-				ciphers: options.ciphers
+				ciphers: this._options.ciphers
 			}
-		},
-		function (err, client) {
-			if (err) {
-				throw err;
-			} else {
+		});
+	}
 
-				let content = {};
-				Object.assign(content, _configuration);
-				Object.assign(content, args);
+	this._soapClient.then((client) => {
 
-				client.MovimentoAddSaldo(
-					content,
-					options,
-					{
-						"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/MovimentoAddSaldo"
-					},
-					function (err, result) {
-						if (callback && typeof callback === "function") {
-							callback(err, result)
-						}
-					}
-				);
-			}
-		}
-	);
+		let content = {};
+		Object.assign(content, this._configuration);
+		Object.assign(content, args);
+
+		client.MovimentoAddSaldo(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/MovimentoAddSaldo"}, callback);
+
+	});
 };
