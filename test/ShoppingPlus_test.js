@@ -228,5 +228,47 @@ describe("ShoppingPlusClient", () => {
 				});
 			});
 		});
-	})
+
+		context("#callCardGet", function () {
+
+			this.timeout(5000);
+
+			let SPC = new ShoppingPlusClient(conf);
+
+
+			it("should call CardGet and return all the data", function (done) {
+
+
+				SPC.callCardGet({IdCard: 1000}, function (err, data) {
+
+					console.log(err, data)
+
+					expect(err).to.be.null;
+					expect(data).to.be.an("object").with.all.keys(["CardGetResult"]);
+					expect(data.CardGetResult).to.be.an("object").with.all.keys(["stato", "daticard", "descrizione"]);
+					expect(data.CardGetResult.daticard).to.be.an("object").with.all.keys(["idrecord", "idcard", "idcliente", "dataemissione", "dataritiro", "idgruppocard", "statocard", "blacklist", "password", "idpdv", "qrcode"]);
+					expect(data.CardGetResult.stato).to.equal("0");
+
+					done();
+				});
+			});
+
+			it("should reuse the same SoapClient if it's already defined", function (done) {
+
+				SPC.callCardGet({IdCard: 1000}, function (err, data) {
+
+					SPC.callCardGet({IdCard: 1000}, function (err, data) {
+
+						expect(err).to.be.null;
+						expect(data).to.be.an("object").with.all.keys(["CardGetResult"]);
+						expect(data.CardGetResult).to.be.an("object").with.all.keys(["stato", "daticard", "descrizione"]);
+						expect(data.CardGetResult.daticard).to.be.an("object").with.all.keys(["idrecord", "idcard", "idcliente", "dataemissione", "dataritiro", "idgruppocard", "statocard", "blacklist", "password", "idpdv", "qrcode"]);
+						expect(data.CardGetResult.stato).to.equal("0");
+
+						done();
+					});
+				});
+			});
+		});
+	});
 });

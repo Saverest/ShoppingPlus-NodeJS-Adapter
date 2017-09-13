@@ -159,7 +159,7 @@ ShoppingPlusClient.prototype.callMovimentoAddSaldo = function (args, callback) {
  * @property {number} IdCliente IdCliente, test: 1
  * @property {string} [Controllo] Stringa di controllo
  */
-/*** CardSaldoGet
+/*** ClienteGet
  * @param {ClienteGetArgs} args
  * @param {callClienteGetCallback} callback
  */
@@ -181,6 +181,43 @@ ShoppingPlusClient.prototype.callClienteGet = function (args, callback) {
 		Object.assign(content, args);
 
 		client.ClienteGet(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/ClienteGet"}, callback);
+
+	});
+};
+
+
+/***
+ * @callback callCardGetCallback
+ * @param {object} error
+ * @param {object} result
+ */
+/***
+ * @typedef {object} CardGetArgs
+ * @property {number} IdCard IdCard, test: 1000
+ * @property {string} [Controllo] Stringa di controllo
+ */
+/*** CardGet
+ * @param {CardGetArgs} args
+ * @param {callCardGetCallback} callback
+ */
+ShoppingPlusClient.prototype.callCardGet = function (args, callback) {
+
+	if (!this._soapClient) {
+		this._soapClient = Soap.createClientAsync(url, {
+			timeout: this._timeout,
+			wsdl_options: {
+				ciphers: this._options.ciphers
+			}
+		});
+	}
+
+	this._soapClient.then((client) => {
+
+		let content = {};
+		Object.assign(content, this._configuration);
+		Object.assign(content, args);
+
+		client.CardGet(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/CardGet"}, callback);
 
 	});
 };
