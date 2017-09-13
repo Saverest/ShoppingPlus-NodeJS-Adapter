@@ -1,6 +1,6 @@
 {
   "name": "shoppingplus-adapter",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "A NodeJS ShoppingPlus API adapter",
   "main": "index.js",
   "scripts": {

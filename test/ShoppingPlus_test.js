@@ -231,7 +231,7 @@ describe("ShoppingPlusClient", () => {
 
 		context("#callCardGet", function () {
 
-			this.timeout(5000);
+			this.timeout(6000);
 
 			let SPC = new ShoppingPlusClient(conf);
 
@@ -240,8 +240,6 @@ describe("ShoppingPlusClient", () => {
 
 
 				SPC.callCardGet({IdCard: 1000}, function (err, data) {
-
-					console.log(err, data)
 
 					expect(err).to.be.null;
 					expect(data).to.be.an("object").with.all.keys(["CardGetResult"]);
@@ -256,6 +254,12 @@ describe("ShoppingPlusClient", () => {
 			it("should reuse the same SoapClient if it's already defined", function (done) {
 
 				SPC.callCardGet({IdCard: 1000}, function (err, data) {
+
+					expect(err).to.be.null;
+					expect(data).to.be.an("object").with.all.keys(["CardGetResult"]);
+					expect(data.CardGetResult).to.be.an("object").with.all.keys(["stato", "daticard", "descrizione"]);
+					expect(data.CardGetResult.daticard).to.be.an("object").with.all.keys(["idrecord", "idcard", "idcliente", "dataemissione", "dataritiro", "idgruppocard", "statocard", "blacklist", "password", "idpdv", "qrcode"]);
+					expect(data.CardGetResult.stato).to.equal("0");
 
 					SPC.callCardGet({IdCard: 1000}, function (err, data) {
 
