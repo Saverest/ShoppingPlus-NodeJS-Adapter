@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/Saverest/ShoppingPlus-Adapter.git"
+    "url": "git@github.com:Saverest/ShoppingPlus-NodeJS-Adapter.git"
   },
   "keywords": [
     "shoppingplus",
@@ -19,9 +19,9 @@
   "author": "Filippo Berto (bertof)",
   "license": "MIT",
   "bugs": {
-    "url": "https://gitlab.com/Saverest/ShoppingPlus-Adapter/issues"
+    "url": "https://github.com/Saverest/ShoppingPlus-NodeJS-Adapter/issues"
   },
-  "homepage": "https://gitlab.com/Saverest/ShoppingPlus-Adapter#README",
+  "homepage": "https://github.com/Saverest/ShoppingPlus-NodeJS-Adapter#README",
   "dependencies": {
     "soap": "^0.21.0"
   },
