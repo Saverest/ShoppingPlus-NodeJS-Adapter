@@ -31,7 +31,7 @@
     "mocha": "^3.5.3"
   },
   "files": [
-    "*.js",
+    "shoppingplus-adapter.js",
     "test/"
   ]
 }

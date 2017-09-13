@@ -6,7 +6,7 @@ chai.config.includeStack = true;
 
 const expect = chai.expect;
 
-const ShoppingPlusClient = require("../ShoppingPlusClient");
+const ShoppingPlusClient = require("../shoppingplus-adapter");
 
 const conf = {
 	"IdUtente": 715,
