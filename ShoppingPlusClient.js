@@ -72,8 +72,13 @@ ShoppingPlusClient.prototype.getConfiguration = function () {
  * @param {object} error
  * @param {object} result
  */
+/***
+ * @typedef {object} callCardSaldoGetArgs
+ * @property {number} IdCard IdCard, test: 1000
+ * @property {string} [Controllo] Stringa di controllo
+ */
 /*** CardSaldoGet
- * @param args
+ * @param {callCardSaldoGetArgs} args
  * @param {callCardSaldoGetCallback} callback
  */
 ShoppingPlusClient.prototype.callCardSaldoGet = function (args, callback) {
@@ -103,8 +108,23 @@ ShoppingPlusClient.prototype.callCardSaldoGet = function (args, callback) {
  * @param {object} error
  * @param {object} result
  */
+/***
+ * @typedef {object} MovimentoAddSaldoArgs
+ * @property {number} IdCampagna    Id campagna, test: 1
+ * @property {number} IdTerm        Id terminale, test: 1
+ * @property {number} IdCard        Id card, test: 1000
+ * @property {number} [DataMov]     Data movimento, test: 201001011035
+ * @property {string} IdCausale     Id causale, test: "AC" TODO: definire lista valori
+ * @property {number} Importo       Importo, test: 50
+ * @property {number} Rapporto      Rapporto di conversione dell'importo, test: 50
+ * @property {string} Numero        Numero del movimento, formato "000000", test: "000000"
+ * @property {string} CodAut        Codice autorizzativo, formato "000000", test: "000000",
+ * @property {string} TipoRec       Tipo di record, formato "AA", test: "MO" TODO: definire lista valori
+ * @property {number} IdRevisione   Codice Revisione, vale 0 per non specificarlo, test: 0
+ * @property {string} [Controllo] Stringa di controllo
+ */
 /*** CardSaldoGet
- * @param args
+ * @param {MovimentoAddSaldoArgs} args
  * @param {callMovimentoAddSaldoCallback} callback
  */
 ShoppingPlusClient.prototype.callMovimentoAddSaldo = function (args, callback) {
@@ -125,6 +145,42 @@ ShoppingPlusClient.prototype.callMovimentoAddSaldo = function (args, callback) {
 		Object.assign(content, args);
 
 		client.MovimentoAddSaldo(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/MovimentoAddSaldo"}, callback);
+
+	});
+};
+
+/***
+ * @callback callClienteGetCallback
+ * @param {object} error
+ * @param {object} result
+ */
+/***
+ * @typedef {object} ClienteGetArgs
+ * @property {number} IdCliente IdCliente, test: 1
+ * @property {string} [Controllo] Stringa di controllo
+ */
+/*** CardSaldoGet
+ * @param {ClienteGetArgs} args
+ * @param {callClienteGetCallback} callback
+ */
+ShoppingPlusClient.prototype.callClienteGet = function (args, callback) {
+
+	if (!this._soapClient) {
+		this._soapClient = Soap.createClientAsync(url, {
+			timeout: this._timeout,
+			wsdl_options: {
+				ciphers: this._options.ciphers
+			}
+		});
+	}
+
+	this._soapClient.then((client) => {
+
+		let content = {};
+		Object.assign(content, this._configuration);
+		Object.assign(content, args);
+
+		client.ClienteGet(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/ClienteGet"}, callback);
 
 	});
 };

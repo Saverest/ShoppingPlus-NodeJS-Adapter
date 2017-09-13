@@ -188,5 +188,45 @@ describe("ShoppingPlusClient", () => {
 				});
 			});
 		});
+
+		context("#callClienteGet", function () {
+
+			this.timeout(5000);
+
+			let SPC = new ShoppingPlusClient(conf);
+
+
+			it("should call ClienteGet and return all the data", function (done) {
+
+
+				SPC.callClienteGet({IdCliente: 1}, function (err, data) {
+
+					expect(err).to.be.null;
+					expect(data).to.be.an("object").with.all.keys(["ClienteGetResult"]);
+					expect(data.ClienteGetResult).to.be.an("object").with.all.keys(["stato", "daticliente", "descrizione"]);
+					expect(data.ClienteGetResult.daticliente).to.be.an("object").with.all.keys(["idrecord", "idcliente", "cognome", "nome", "dataiscrizione", "indirizzo", "cap", "citta", "prov", "nazione", "email", "telefono", "fax", "cell", "cf", "sesso", "statocivile", "professione", "datanascita", "luogonascita", "tipodoc", "numerodoc", "note", "statocliente"]);
+					expect(data.ClienteGetResult.stato).to.equal("0");
+
+					done();
+				});
+			});
+
+			it("should reuse the same SoapClient if it's already defined", function (done) {
+
+				SPC.callClienteGet({IdCliente: 1}, function (err, data) {
+
+					SPC.callClienteGet({IdCliente: 1}, function (err, data) {
+
+						expect(err).to.be.null;
+						expect(data).to.be.an("object").with.all.keys(["ClienteGetResult"]);
+						expect(data.ClienteGetResult).to.be.an("object").with.all.keys(["stato", "daticliente", "descrizione"]);
+						expect(data.ClienteGetResult.daticliente).to.be.an("object").with.all.keys(["idrecord", "idcliente", "cognome", "nome", "dataiscrizione", "indirizzo", "cap", "citta", "prov", "nazione", "email", "telefono", "fax", "cell", "cf", "sesso", "statocivile", "professione", "datanascita", "luogonascita", "tipodoc", "numerodoc", "note", "statocliente"]);
+						expect(data.ClienteGetResult.stato).to.equal("0");
+
+						done();
+					});
+				});
+			});
+		});
 	})
 });
