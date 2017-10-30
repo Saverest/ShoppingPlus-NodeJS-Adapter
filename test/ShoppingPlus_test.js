@@ -379,5 +379,60 @@ describe("ShoppingPlusClient", () => {
                 });
             });
         });
+
+        context("#callMovimentoListGet", function () {
+            this.timeout(5000);
+
+            let SPC = new ShoppingPlusClient(conf);
+
+
+            it("should call MovimentoListGet and return all the data", function (done) {
+
+
+                SPC.callMovimentoListGet({
+                    DataDal: "20100101",
+                    DataAl: "20101231",
+                    TipoData: "M"
+                }, function (err, data) {
+
+                    console.log(JSON.stringify(data, null, 2))
+
+                    expect(err).to.be.null;
+                    expect(data).to.be.an("object").with.all.keys(["MovimentoListGetResult"]);
+                    expect(data.MovimentoListGetResult).to.be.an("object").with.all.keys(["stato", "descrizione", "numrecordtot", "numblocchitot", "numblocco", "numrecordblocco", "arraymovimentolist"]);
+                    expect(data.MovimentoListGetResult.stato).to.equal("0");
+                    expect(data.MovimentoListGetResult.arraymovimentolist.MovimentoInfoType).to.be.an("array");
+                    expect(data.MovimentoListGetResult.arraymovimentolist.MovimentoInfoType[0]).to.be.an("object").with.any.keys(["idrecord", "idmovimento", "idterm", "importo", "rapporto"]);
+
+                    done();
+                });
+            });
+
+            it("should reuse the same SoapClient if it's already defined", function (done) {
+
+                SPC.callMovimentoListGet({
+                    DataDal: "20100101",
+                    DataAl: "20101231",
+                    TipoData: "M"
+                }, function (err, data) {
+
+                    SPC.callMovimentoListGet({
+                        DataDal: "20100101",
+                        DataAl: "20101231",
+                        TipoData: "M"
+                    }, function (err, data) {
+
+                        expect(err).to.be.null;
+                        expect(data).to.be.an("object").with.all.keys(["MovimentoListGetResult"]);
+                        expect(data.MovimentoListGetResult).to.be.an("object").with.all.keys(["stato", "descrizione", "numrecordtot", "numblocchitot", "numblocco", "numrecordblocco", "arraymovimentolist"]);
+                        expect(data.MovimentoListGetResult.stato).to.equal("0");
+                        expect(data.MovimentoListGetResult.arraymovimentolist.MovimentoInfoType).to.be.an("array");
+                        expect(data.MovimentoListGetResult.arraymovimentolist.MovimentoInfoType[0]).to.be.an("object").with.any.keys(["idrecord", "idmovimento", "idterm", "importo", "rapporto"]);
+
+                        done();
+                    });
+                });
+            });
+        });
     });
 });
