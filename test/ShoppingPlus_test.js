@@ -229,6 +229,55 @@ describe("ShoppingPlusClient", () => {
             });
         });
 
+        context("#callClienteListGet", function () {
+            this.timeout(5000);
+
+            let SPC = new ShoppingPlusClient(conf);
+
+
+            it("should call ClienteListGet and return all the data", function (done) {
+
+
+                SPC.callClienteListGet({
+                    CardDal: 1001,
+                    CardAl: 1005
+                }, function (err, data) {
+
+                    expect(err).to.be.null;
+                    expect(data).to.be.an("object").with.all.keys(["ClienteListGetResult"]);
+                    expect(data.ClienteListGetResult).to.be.an("object").with.all.keys(["stato", "descrizione", "numrecordtot", "numblocchitot", "numblocco", "numrecordblocco", "arrayclientelist"]);
+                    expect(data.ClienteListGetResult.stato).to.equal("0");
+                    expect(data.ClienteListGetResult.arrayclientelist.ClienteInfoType).to.be.an("array");
+                    expect(data.ClienteListGetResult.arrayclientelist.ClienteInfoType[0]).to.be.an("object").with.any.keys(["idcliente", "cognome", "nome", "dataiscrizione"]);
+
+                    done();
+                });
+            });
+
+            it("should reuse the same SoapClient if it's already defined", function (done) {
+
+                SPC.callClienteListGet({
+                    CardDal: 1001,
+                    CardAl: 1005
+                }, function (err, data) {
+
+                    SPC.callClienteListGet({
+                        CardDal: 1001,
+                        CardAl: 1005
+                    }, function (err, data) {
+
+                        expect(data).to.be.an("object").with.all.keys(["ClienteListGetResult"]);
+                        expect(data.ClienteListGetResult).to.be.an("object").with.all.keys(["stato", "descrizione", "numrecordtot", "numblocchitot", "numblocco", "numrecordblocco", "arrayclientelist"]);
+                        expect(data.ClienteListGetResult.stato).to.equal("0");
+                        expect(data.ClienteListGetResult.arrayclientelist.ClienteInfoType).to.be.an("array");
+                        expect(data.ClienteListGetResult.arrayclientelist.ClienteInfoType[0]).to.be.an("object").with.any.keys(["idcliente", "cognome", "nome", "dataiscrizione"]);
+
+                        done();
+                    });
+                });
+            });
+        });
+
         context("#callCardGet", function () {
 
             this.timeout(6000);
