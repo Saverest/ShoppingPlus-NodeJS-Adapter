@@ -258,3 +258,54 @@ ShoppingPlusClient.prototype.callMovimentoGet = function (args, callback) {
 
     });
 };
+
+/***
+ * @callback callMovimentoListGetCallback
+ * @param {object} error
+ * @param {object} result
+ */
+/***
+ * @typedef {object} MovimentoListGetArgs
+ * @property {number} [IdMovimento] Codice del movimento
+ * @property {number} [IdTransazione] Codice della transazione
+ * @property {string} [DataDal] Data minima di ricerca, formato: AAAAMMDD
+ * @property {string} [DataAl] Data massima di ricerca, formato: AAAAMMDD
+ * @property {string} [TipoData] Tipo di data di ricerca. Valore stringa scelto tra i seguenti valori: “M” = data del movimento, “R” = data di registrazione del movimento
+ * @property {number} [CardDal] Codice card minimo di ricerca
+ * @property {number} [CardAl] Codice card massimo di ricerca
+ * @property {number} [ImportoDal] Importo minimo di ricerca
+ * @property {number} [ImportoAl] Importo massimo di ricerca
+ * @property {number} [IdPdv] Codice del punto vendita di ricerca
+ * @property {number} [IdCampagna] Codice della campagna di ricerca
+ * @property {number} [IdTerm] Codice del terminale di ricerca
+ * @property {number} [IdCausale] Codice della causale di ricerca
+ * @property {string} [TipoCausale] Tipo della causale di ricerca, Valore stringa scelto tra i seguenti valori: “A” = Avere, “D” = Dare
+ * @property {number} [NumBlocco] Numero del blocco
+ * @property {string} [Controllo] Stringa di controllo
+ */
+/*** MovimentoGet
+ * @param {MovimentoListGetArgs} args
+ * @param {callMovimentoListGetCallback} callback
+ */
+ShoppingPlusClient.prototype.callMovimentoListGet = function (args, callback) {
+    if (!this._soapClient) {
+        this._soapClient = Soap.createClientAsync(url, {
+            timeout: this._timeout,
+            wsdl_options: {
+                ciphers: this._options.ciphers
+            }
+        });
+    }
+
+    this._soapClient.then((client) => {
+
+        let content = {};
+        Object.assign(content, this._configuration);
+        Object.assign(content, args);
+
+        client.MovimentoListGet(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/MovimentoListGet"}, callback);
+
+    });
+};
+
+};
