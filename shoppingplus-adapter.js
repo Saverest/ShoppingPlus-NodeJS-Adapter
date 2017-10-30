@@ -308,4 +308,42 @@ ShoppingPlusClient.prototype.callMovimentoListGet = function (args, callback) {
     });
 };
 
+/***
+ * @callback callClienteListGetCallback
+ * @param {object} error
+ * @param {object} result
+ */
+/***
+ * @typedef {object} ClienteListGetArgs
+ * @property {number} [CardDal] Codice card minimo di ricerca
+ * @property {number} [CardAl] Codice card massimo di ricerca
+ * @property {string} [DataDal] Data minima di ricerca, formato: AAAAMMDD
+ * @property {string} [DataAl] Data massima di ricerca, formato: AAAAMMDD
+ * @property {string} [TipoData] Tipo di data di ricerca. Valore stringa scelto tra i seguenti valori: “M” = data del movimento, “R” = data di registrazione del movimento
+ * @property {number} [NumBlocco] Codice card minimo di ricerca
+ * @property {string} [Controllo] Stringa di controllo
+ */
+/*** ClienteListGet
+ * @param {ClienteListGetArgs} args
+ * @param {callClienteListGetCallback} callback
+ */
+ShoppingPlusClient.prototype.callClienteListGet = function (args, callback) {
+    if (!this._soapClient) {
+        this._soapClient = Soap.createClientAsync(url, {
+            timeout: this._timeout,
+            wsdl_options: {
+                ciphers: this._options.ciphers
+            }
+        });
+    }
+
+    this._soapClient.then((client) => {
+
+        let content = {};
+        Object.assign(content, this._configuration);
+        Object.assign(content, args);
+
+        client.ClienteListGet(content, this._options, {"SOAPAction": "https://servizi.shoppingplus.it/webservices/spservice/ClienteListGet"}, callback);
+
+    });
 };
